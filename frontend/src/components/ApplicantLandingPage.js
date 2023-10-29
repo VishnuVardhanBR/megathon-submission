@@ -13,7 +13,7 @@ export default function ApplicantLandingPage(){
       navigate(`/profiles`);
     }
     else if (activeTab === 'three'){
-      navigate(`/other`);
+      navigate(`/voiceanalysis`);
     }
   };
 

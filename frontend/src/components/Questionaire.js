@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 export function Questions() {
+	const navigate = useNavigate();
 	const [traits, setTraits] = useState({
 		extraversion: 0,
 		agreeableness: 0,
@@ -9,9 +11,9 @@ export function Questions() {
 		openness: 0,
 	});
 	const handleSubmit = () => {
-		console.log(traits);
+		// console.log(traits);
 		// const jsonData = JSON.stringify(traits);
-		const jsonData = {
+		const jsonData = {one: {
 				gender: "Female",
 				age: 30,
 				'openness': 5,
@@ -20,7 +22,7 @@ export function Questions() {
 				'agreeableness': 6,
 				'extroversion': 4,
 
-		};
+		}};
 		axios
 			.post("http://127.0.0.1:5001/predict_personality", jsonData, {
 				headers: {
@@ -35,7 +37,7 @@ export function Questions() {
 						},
 					})
 					.then((storeResponse) => {
-						console.log("Data stored:", storeResponse.data);
+						// console.log("Data stored:", storeResponse.data);
 					})
 					.catch((storeError) => {
 						console.error("Store Error:", storeError);
@@ -44,6 +46,7 @@ export function Questions() {
 			.catch((error) => {
 				console.error("Error:", error);
 			});
+			navigate("/landing");
 	};
 
 	const questions = [

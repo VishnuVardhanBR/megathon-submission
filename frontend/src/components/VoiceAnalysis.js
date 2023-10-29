@@ -39,11 +39,11 @@ const SpeechComponent = () => {
     // Send data to API
     axios.post('http://localhost:5001/voice', { text: transcript })
       .then(response => {
-        console.log('Data sent:', response);
+        // console.log('Data sent:', response);
         navigate(`/landing`);
       })
       .catch(error => {
-        console.log('Error:', error);
+        // console.log('Error:', error);
       });
   };
 

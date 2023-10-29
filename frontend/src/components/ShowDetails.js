@@ -27,9 +27,9 @@ const sample3 = {
 	extroversion: 8,
 };
 
-function BarGraph() {
-	const labels = Object.keys(sample3);
-	const data = Object.values(sample3);
+function BarGraph({dataDict}) {
+	const labels = Object.keys(dataDict);
+	const data = Object.values(dataDict);
 
 	const chartData = {
 		labels: labels,
@@ -53,44 +53,57 @@ export default function ShowDetails() {
 	const [personalitySpeech, setSpeechFinal] = useState({});
 
 	useEffect(() => {
+        axios
+        .get("http://localhost:5001/getone")
+        .then((response) => {
+            const { age, gender, ...newData } = response.data;
+
+            setQuestionResults(newData);
+
+            return axios.post(
+                "http://localhost:5001/predict_personality",
+                newData
+            );
+        })
+        .then((response) => setPersonalityFinal(response.data))
+        .catch((error) => console.error(error));
+
 		axios
-			.get("http://localhost:5001/getone")
-			.then((response) => {
-				setQuestionResults(response.data);
-				console.log(response.data);
-				return axios.post(
-					"http://localhost:5001/predict_personality",
+    .get("http://localhost:5001/gettwo")
+    .then((response) => {
+        const analysisData = response.data.twitter.analysis;
 
-				);
-			})
-			.then((response) => setPersonalityFinal(response.data))
-			.catch((error) => console.error(error));
+        // Convert high floats to integers and keep only positive values
+        const convertedAnalysis = analysisData.map(value =>
+            Math.max(0, Math.floor(value))
+        );
 
-		axios
-			.get("http://localhost:5001/gettwo")
-			.then((response) => {
-				setProfileResults(response.data);
-				console.log(response.data.twitter.analysis);
-				return axios.post(
-					"http://localhost:5001/predict_personality",
-					response.data.twitter.analysis
-				);
-			})
-			.then((response) => setProfileFinal(response.data))
-			.catch((error) => console.error(error));
+        setProfileResults(convertedAnalysis);
 
-		//   axios.get("http://localhost:5001/getthree")
-		//     .then(response => {
-		//       setSpeechResults(response.data);
-		//       console.log(response.data.twitter.analysis);
-		//       return axios.post("http://localhost:5001/predict_personality", response.data);
-		//     })
-		//     .then(response => setSpeechFinal(response.data))
-		//     .catch(error => console.error(error));
+        return axios.post(
+            "http://localhost:5001/predict_personality",
+            convertedAnalysis
+        );
+    })
+    .then((response) => setProfileFinal(response.data))
+    .catch((error) => console.error(error));
+		  axios.get("http://localhost:5001/getthree")
+		    .then(response => {
+		      setSpeechResults(response.data);
+		    //   console.log(response.data.twitter.analysis);
+		      return axios.post("http://localhost:5001/predict_personality", response.data);
+		    })
+		    .then(response => setSpeechFinal(response.data))
+		    .catch(error => console.error(error));
 	}, []);
 
-	console.log(personalityQuestion);
-	console.log(personalityProfile);
+    // console.log(setQuestionResults)
+	// console.log(profileResults)
+	// console.log(speechResults)
+
+	// console.log(personalityQuestion);
+	// console.log(personalityProfile);
+    // console.log(personalitySpeech);
 	return (
 		<>
 			<div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8  mx-auto">
@@ -206,7 +219,7 @@ export default function ShowDetails() {
 							</h1>
 						</div>
 						<div class="max-w-[1140px] lg:p-32 lg:pt-12 relative m">
-							<BarGraph dataDict={sample1} />
+							<BarGraph dataDict={questionResults} />
 						</div>
 					</div>
 
@@ -221,7 +234,7 @@ export default function ShowDetails() {
 							</h1>
 						</div>
 						<div class="max-w-[1140px] lg:p-32 lg:pt-12 relative m">
-							<BarGraph dataDict={sample2} />
+							<BarGraph dataDict={profileResults} />
 						</div>
 					</div>
 

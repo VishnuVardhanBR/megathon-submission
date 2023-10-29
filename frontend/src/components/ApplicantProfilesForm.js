@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export default function Applicant(){
   const [codechefURL, setCodechefURL] = useState('');
 const [twitterURL, setTwitterURL] = useState('');
-
+const navigate = useNavigate();
 const handleSubmit = async (e) => {
   e.preventDefault();
 
@@ -40,7 +41,7 @@ const handleSubmit = async (e) => {
       .then((storeResponse) => {
         axios.get('http://localhost:5001/analysetweets')
           .then(function (response) {
-            console.log(response.data);
+            // console.log(response.data);
           })
           .catch(function (error) {
             console.error('Error:', error);
@@ -53,6 +54,7 @@ const handleSubmit = async (e) => {
   } catch (error) {
     console.error("API Error:", error);
   }
+  navigate("/landing");
 
 }
 
